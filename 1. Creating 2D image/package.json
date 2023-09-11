@@ -1,0 +1,19 @@
+{
+  "name": "1.-creating-2d-image",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/three": "^0.156.0",
+    "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "three": "^0.156.1"
+  }
+}
