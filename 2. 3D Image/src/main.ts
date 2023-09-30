@@ -16,18 +16,31 @@ let butterfly: THREE.Line;
 fetchAndDrawLines("../butterfly.json");
 
 const gui = new dat.GUI();
-gui;
 const controls = {
-  angle: 0,
-  dx: 0,
-  dy: 0,
-  dz: 0,
+  angleX: 0,
+  angleY: 0,
+  angleZ: 0,
+
+  dX: 0,
+  dY: 0,
+  dZ: 0,
+
+  scaleX: 1,
+  scaleY: 1,
+  scaleZ: 1,
 };
 
-gui.add(controls, "angle", 0, Math.PI * 2).name("Rotation Angle");
-gui.add(controls, "dx", -50, 50).name("Translation X");
-gui.add(controls, "dy", -50, 50).name("Translation Y");
-gui.add(controls, "dz", -50, 50).name("Translation Z");
+gui.add(controls, "angleX", 0, 2 * Math.PI).name("Rotation X");
+gui.add(controls, "angleY", 0, 2 * Math.PI).name("Rotation Y");
+gui.add(controls, "angleZ", 0, 2 * Math.PI).name("Rotation Z");
+
+gui.add(controls, "dX", -50, 50).name("Translation X");
+gui.add(controls, "dY", -50, 50).name("Translation Y");
+gui.add(controls, "dZ", -50, 50).name("Translation Z");
+
+gui.add(controls, "scaleX", 0, 10).name("Scale X");
+gui.add(controls, "scaleY", 0, 10).name("Scale Y");
+gui.add(controls, "scaleZ", 0, 10).name("Scale Z");
 
 // Animate Scene
 animate();
@@ -113,22 +126,35 @@ function drawLines(jsonData: { x: number; y: number; z: number }[]) { //{{{
 
 function animate(): void {
   requestAnimationFrame(animate);
-  //
-  // Сброс текущих преобразований
+
   butterfly.matrix.identity();
   butterfly.matrixWorldNeedsUpdate = true;
 
-  const rotationMatrix = AffineTransformations.createRotationMatrix(
-    controls.angle,
+  const xRotationMatrix = AffineTransformations.createXRotationMatrix(
+    controls.angleX,
+  );
+  const yRotationMatrix = AffineTransformations.createYRotationMatrix(
+    controls.angleY,
+  );
+  const zRotationMatrix = AffineTransformations.createZRotationMatrix(
+    controls.angleZ,
   );
   const translationMatrix = AffineTransformations.createTranslationMatrix(
-    controls.dx,
-    controls.dy,
-    controls.dz,
+    controls.dX,
+    controls.dY,
+    controls.dZ,
+  );
+  const scaleMatrix = AffineTransformations.createScalingMatrix(
+    controls.scaleX,
+    controls.scaleY,
+    controls.scaleZ,
   );
 
-  butterfly.applyMatrix4(rotationMatrix);
+  butterfly.applyMatrix4(xRotationMatrix);
+  butterfly.applyMatrix4(yRotationMatrix);
+  butterfly.applyMatrix4(zRotationMatrix);
   butterfly.applyMatrix4(translationMatrix);
+  butterfly.applyMatrix4(scaleMatrix);
 
   renderer.render(scene, camera);
 }

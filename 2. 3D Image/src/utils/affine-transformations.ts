@@ -18,9 +18,9 @@ export class AffineTransformations {
 
     const matrix = new THREE.Matrix4();
     matrix.set(
-      cosTheta, -sinTheta, 0, 0,
-      sinTheta, cosTheta, 0, 0,
-      0, 0, 1, 0,
+      1, 0, 0, 0,
+      0, cosTheta, -sinTheta,  0,
+      0, sinTheta, cosTheta, 0,
       0, 0, 0, 1
     );
     return matrix;
