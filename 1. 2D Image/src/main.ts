@@ -13,7 +13,7 @@ const scene = new THREE.Scene();
 
 // Fetch and draw lines
 let butterfly: THREE.Line;
-fetchAndDrawLines("../butterfly.json");
+fetchAndDrawLines("./classes/butterfly.json");
 
 const gui = new dat.GUI();
 const controls = {
