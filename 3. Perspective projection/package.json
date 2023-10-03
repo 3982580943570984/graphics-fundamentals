@@ -1,5 +1,5 @@
 {
-  "name": "my",
+  "name": "1.-creating-2d-image",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,7 +10,12 @@
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "lil-gui": "^0.18.2",
+    "@types/dat.gui": "^0.7.10",
+    "@types/three": "^0.156.0",
     "typescript": "^5.2.2"
+  },
+  "dependencies": {
+    "dat.gui": "^0.7.9",
+    "three": "^0.156.1"
   }
 }

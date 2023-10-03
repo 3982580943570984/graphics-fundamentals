@@ -1,6 +1,7 @@
 import GUI from "lil-gui";
 
-interface Controls { //{{{
+interface Controls {
+  // {{{
   angleX: number;
   angleY: number;
   angleZ: number;
@@ -12,10 +13,16 @@ interface Controls { //{{{
   scaleZ: number;
 } //}}}
 
-export class GUIControls { //{{{
+export class GUIControls {
+  // {{{
   private _gui: GUI = new GUI();
+
+  public get gui() {
+    return this._gui; //{{{
+  } //}}}
+
   private _controls: Controls = {
-    angleX: 0,
+    angleX: 0, //{{{
     angleY: 0,
     angleZ: 0,
 
@@ -26,12 +33,15 @@ export class GUIControls { //{{{
     scaleX: 1,
     scaleY: 1,
     scaleZ: 1,
-  };
-  public get controls() {
-    return this._controls;
-  }
 
-  public setupGUI() { //{{{
+  }; //}}}
+
+  public get controls() {
+    return this._controls; //{{{
+  } //}}}
+
+  public setupGUI() {
+    //{{{
     this._gui.add(this._controls, "angleX", 0, 2 * Math.PI).name("Rotation X");
     this._gui.add(this._controls, "angleY", 0, 2 * Math.PI).name("Rotation Y");
     this._gui.add(this._controls, "angleZ", 0, 2 * Math.PI).name("Rotation Z");
@@ -49,5 +59,7 @@ export class GUIControls { //{{{
         this._gui.reset();
       },
     }, "reset");
+    this._gui.onChange(() => {
+    });
   } //}}}
 } //}}}
