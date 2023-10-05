@@ -12,6 +12,7 @@
   "devDependencies": {
     "@types/dat.gui": "^0.7.10",
     "@types/three": "^0.156.0",
+    "lil-gui": "^0.18.2",
     "typescript": "^5.2.2"
   },
   "dependencies": {

@@ -23,7 +23,6 @@ export class Butterfly extends THREE.Line {
         const shiftedPathPoints = this.createShiftedPathPoints(data);
 
         this._points = [...originalPathPoints, ...shiftedPathPoints];
-        this._points = originalPathPoints;
 
         this.drawButterflyPath();
       })

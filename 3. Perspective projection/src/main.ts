@@ -8,8 +8,7 @@ guiControls.setupGUI();
 
 // Initialize Three.js components
 const renderer = initRenderer();
-function initRenderer(): THREE.WebGLRenderer {
-  //{{{
+function initRenderer(): THREE.WebGLRenderer { //{{{
   const renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.getContext().disable(renderer.getContext().DEPTH_TEST);
@@ -18,32 +17,28 @@ function initRenderer(): THREE.WebGLRenderer {
 } //}}}
 
 const camera = initCamera();
-function initCamera(): THREE.Camera {
-  //{{{
-  const fov = 55; // угол обзора в градусах
-  const aspect = window.innerWidth / window.innerHeight; // соотношение сторон
-  const near = 0.1; // ближняя плоскость отсечения
-  const far = 2000; // дальняя плоскость отсечения
+function initCamera(): THREE.Camera {//{{{
+  const camera = new THREE.Camera();
+  camera.position.set(0, 0, 100);
 
-  const top = -near * Math.tan((0.5 * fov * Math.PI) / 180);
-  const bottom = -top;
-  const left = aspect * bottom;
-  const right = aspect * top;
+  const fov = 60 * (Math.PI / 180); // Convert FOV to radians
+  const aspect = window.innerWidth / window.innerHeight;
+  const near = 0.001;
+  const far = 1000;
 
-  const perspectiveMatrix = new THREE.Matrix4().makePerspective(
-    left,
-    right,
-    bottom,
-    top,
-    near,
-    far
+  const f = 1.0 / Math.tan(fov / 2);
+  const nf = 1 / (near - far);
+
+  camera.projectionMatrix.set(
+    f / aspect, 0, 0, 0,
+    0, f, 0, 0,
+    0, 0, (far + near) * nf, 2 * far * near * nf,
+    0, 0, -1, 0
   );
 
-  const camera = new THREE.Camera();
-  camera.projectionMatrix = perspectiveMatrix;
-  camera.position.set(0, 0, 50);
   return camera;
-} //}}}
+}//}}}
+
 
 const scene = new THREE.Scene();
 
@@ -51,45 +46,43 @@ const scene = new THREE.Scene();
 let butterfly = new Butterfly(scene);
 butterfly.fetchAndDraw("/butterfly.json");
 
-const size = window.innerHeight / 2;
-const divisions = size / 5;
-const colorCenterLine = new THREE.Color("blue");
-const colorGrid = new THREE.Color("grey");
-const gridHelper = new THREE.GridHelper(
-  size,
-  divisions,
-  colorCenterLine,
-  colorGrid
-);
-gridHelper.rotateX(Math.PI / 2);
-scene.add(gridHelper);
+const create_grid = () => {//{{{
+  const size = window.innerHeight / 2;
+  const divisions = size / 5;
+  const colorCenterLine = new THREE.Color("blue");
+  const colorGrid = new THREE.Color("grey");
+  const gridHelper = new THREE.GridHelper(
+    size,
+    divisions,
+    colorCenterLine,
+    colorGrid,
+  );
+  gridHelper.rotateX(Math.PI / 2);
+  scene.add(gridHelper);
+};//}}}
+create_grid();
 
 // Animate Scene
 animate();
-
-function animate(): void {
-  //{{{
+function animate(): void { //{{{
   requestAnimationFrame(animate);
 
-  // ��������� ����� ��������
   butterfly.rotation.set(
     guiControls.controls.angleX,
     guiControls.controls.angleY,
-    guiControls.controls.angleZ
+    guiControls.controls.angleZ,
   );
 
-  // ��������� ������� �����������
   butterfly.position.set(
     guiControls.controls.dX,
     guiControls.controls.dY,
-    guiControls.controls.dZ
+    guiControls.controls.dZ,
   );
 
-  // ��������� ��������
   butterfly.scale.set(
     guiControls.controls.scaleX,
     guiControls.controls.scaleY,
-    guiControls.controls.scaleZ
+    guiControls.controls.scaleZ,
   );
 
   renderer.render(scene, camera);
