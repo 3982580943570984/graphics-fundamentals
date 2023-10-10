@@ -1,6 +1,6 @@
 import * as THREE from "three";
-import { GUIControls } from "./classes/gui-controls";
 import { Butterfly } from "./classes/butterfly";
+import { GUIControls } from "./classes/gui-controls";
 
 // Initialize lil-gui controls
 const guiControls = new GUIControls();
@@ -46,7 +46,7 @@ scene.add(pointLightHelper1);
 
 // Fetch and draw lines
 let butterfly = new Butterfly(scene);
-butterfly.setPoints("../../public/butterfly.json");
+butterfly.setPoints("/butterfly.json");
 // butterfly.draw();
 
 // Animate Scene
@@ -56,25 +56,27 @@ function animate(): void {
   requestAnimationFrame(animate);
 
   // pointLight.rotateY((0.3 * Math.PI) / 180);
-  butterfly.rotateY((0.3 * Math.PI) / 180);
+  // butterfly.rotateX((0.3 * Math.PI) / 180);
+  // butterfly.rotateY((0.3 * Math.PI) / 180);
+  // butterfly.rotateZ((0.3 * Math.PI) / 180);
 
-  // butterfly.rotation.set(
-  //   guiControls.controls.angleX,
-  //   guiControls.controls.angleY,
-  //   guiControls.controls.angleZ
-  // );
+  butterfly.rotation.set(
+    guiControls.controls.angleX,
+    guiControls.controls.angleY,
+    guiControls.controls.angleZ
+  );
 
-  // butterfly.position.set(
-  //   guiControls.controls.dX,
-  //   guiControls.controls.dY,
-  //   guiControls.controls.dZ
-  // );
+  butterfly.position.set(
+    guiControls.controls.dX,
+    guiControls.controls.dY,
+    guiControls.controls.dZ
+  );
 
-  // butterfly.scale.set(
-  //   guiControls.controls.scaleX,
-  //   guiControls.controls.scaleY,
-  //   guiControls.controls.scaleZ
-  // );
+  butterfly.scale.set(
+    guiControls.controls.scaleX,
+    guiControls.controls.scaleY,
+    guiControls.controls.scaleZ
+  );
 
   renderer.render(scene, camera);
 }

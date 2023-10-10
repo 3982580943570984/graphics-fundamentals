@@ -33,11 +33,18 @@ export class Butterfly extends THREE.Mesh {
 
     this.geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
 
+    let textureLoader = new THREE.TextureLoader();
+    let texture = textureLoader.load("../../assets/pink-flowers-seamless.jpg");
+    texture.wrapS = THREE.RepeatWrapping;
+    texture.wrapT = THREE.RepeatWrapping;
+    texture.repeat.set(0.01, 0.01);
+
     this.material = new THREE.MeshPhongMaterial({
-      color: 0xdb4b9f,
+      // color: 0xdb4b9f,
       specular: 0x222222,
-      shininess: 30,
+      shininess: 3000,
       side: THREE.DoubleSide,
+      map: texture,
     });
 
     this._scene.add(this);
