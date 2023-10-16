@@ -2,6 +2,9 @@ import { Enemy } from "./classes/enemy";
 import { Player } from "./classes/player";
 import { Projectile } from "./classes/projectile";
 
+import { gsap } from "gsap";
+import { Particle } from "./classes/particle";
+
 const canvas = document.querySelector("canvas") as HTMLCanvasElement;
 const context = canvas.getContext("2d") as CanvasRenderingContext2D;
 
@@ -13,12 +16,12 @@ const playerSpawnPosition = {
   y: canvas.height / 2,
 };
 
-const player = new Player(
+let player = new Player(
   context,
   playerSpawnPosition.x,
   playerSpawnPosition.y,
-  30,
-  "blue"
+  10,
+  "white"
 );
 
 const projectileSpawnPosition = {
@@ -26,7 +29,23 @@ const projectileSpawnPosition = {
   y: canvas.height / 2,
 };
 
-const projectiles: Projectile[] = [];
+let projectiles: Projectile[] = [];
+
+function initialize() {
+  player = new Player(
+    context,
+    playerSpawnPosition.x,
+    playerSpawnPosition.y,
+    10,
+    "white"
+  );
+  projectiles = [];
+  enemies = [];
+  particles = [];
+  score = 0;
+  scoreValue.innerHTML = "0";
+  modalScoreValue.innerHTML = "0";
+}
 
 addEventListener("click", (event) => {
   const angle = Math.atan2(
@@ -34,8 +53,8 @@ addEventListener("click", (event) => {
     event.clientX - projectileSpawnPosition.x
   );
   const velocity = {
-    x: Math.cos(angle),
-    y: Math.sin(angle),
+    x: Math.cos(angle) * 4,
+    y: Math.sin(angle) * 4,
   };
   projectiles.push(
     new Projectile(
@@ -43,13 +62,13 @@ addEventListener("click", (event) => {
       projectileSpawnPosition.x,
       projectileSpawnPosition.y,
       5,
-      "red",
+      "white",
       velocity
     )
   );
 });
 
-const enemies: Enemy[] = [];
+let enemies: Enemy[] = [];
 function spawnEnemies() {
   setInterval(() => {
     const radius = Math.random() * (30 - 4) + 4;
@@ -63,7 +82,7 @@ function spawnEnemies() {
       y = Math.random() < 0.5 ? -radius : canvas.height + radius;
     }
 
-    const color = "green";
+    const color = `hsl(${Math.random() * 360}, 50%, 50%)`;
     const angle = Math.atan2(
       projectileSpawnPosition.y - y,
       projectileSpawnPosition.x - x
@@ -76,20 +95,110 @@ function spawnEnemies() {
   }, 1000);
 }
 
+const modalScoreValue = document.getElementById(
+  "modal-score-value"
+) as HTMLHeadElement;
+const scoreValue = document.getElementById("score-value") as HTMLSpanElement;
+let particles: Particle[] = [];
+
+let animationId: number;
+let score: number = 0;
 function animate() {
-  requestAnimationFrame(animate);
-  context.clearRect(0, 0, canvas.width, canvas.height);
+  animationId = requestAnimationFrame(animate);
+
+  context.fillStyle = "rgba(0,0,0,0.1)";
+  context.fillRect(0, 0, canvas.width, canvas.height);
 
   player.draw();
 
-  projectiles.forEach((projectile) => {
-    projectile.update();
+  particles.forEach((particle, particleIndex) => {
+    if (particle.alpha <= 0) {
+      particles.splice(particleIndex, 1);
+    }
+    particle.update();
   });
 
-  enemies.forEach((enemy) => {
+  projectiles.forEach((projectile, projectileIndex) => {
+    projectile.update();
+
+    if (
+      projectile.x + projectile.radius < 0 ||
+      projectile.x - projectile.radius > canvas.width ||
+      projectile.y + projectile.radius < 0 ||
+      projectile.y - projectile.radius > canvas.height
+    ) {
+      setTimeout(() => {
+        projectiles.splice(projectileIndex, 1);
+      }, 0);
+    }
+  });
+
+  enemies.forEach((enemy, enemyIndex) => {
     enemy.update();
+
+    const distanceToPlayer = Math.hypot(player.x - enemy.x, player.y - enemy.y);
+    if (distanceToPlayer - enemy.radius - player.radius < 1) {
+      cancelAnimationFrame(animationId);
+      modalScoreValue.innerHTML = score.toString();
+      modalBoard.style.display = "flex";
+    }
+
+    projectiles.forEach((projectile, projectileIndex) => {
+      const distanceToProjectile = Math.hypot(
+        projectile.x - enemy.x,
+        projectile.y - enemy.y
+      );
+
+      if (distanceToProjectile - enemy.radius - projectile.radius < 1) {
+        const numberOfParticles = enemy.radius * 2;
+        for (let i = 0; i < numberOfParticles; ++i) {
+          particles.push(
+            new Particle(
+              context,
+              projectile.x,
+              projectile.y,
+              Math.random() * 2,
+              enemy.color,
+              {
+                x: (Math.random() - 0.5) * (Math.random() * 8),
+                y: (Math.random() - 0.5) * (Math.random() * 8),
+              }
+            )
+          );
+        }
+
+        if (enemy.radius - 10 > 5) {
+          score += 100;
+          scoreValue.innerHTML = score.toString();
+
+          gsap.to(enemy, {
+            radius: enemy.radius - 10,
+          });
+
+          setTimeout(() => {
+            projectiles.splice(projectileIndex, 1);
+          }, 0);
+        } else {
+          score += 250;
+          scoreValue.innerHTML = score.toString();
+
+          setTimeout(() => {
+            enemies.splice(enemyIndex, 1);
+            projectiles.splice(projectileIndex, 1);
+          }, 0);
+        }
+      }
+    });
   });
 }
 
-animate();
-spawnEnemies();
+const modalBoard = document.getElementById("modal-board") as HTMLDivElement;
+const startGameButton = document.getElementById(
+  "start-game-btn"
+) as HTMLButtonElement;
+startGameButton.addEventListener("click", () => {
+  initialize();
+  animate();
+  spawnEnemies();
+  modalBoard.style.display = "none";
+});
