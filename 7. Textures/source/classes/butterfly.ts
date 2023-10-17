@@ -33,18 +33,49 @@ export class Butterfly extends THREE.Mesh {
 
     this.geometry = new THREE.ExtrudeGeometry(shape, extrudeSettings);
 
-    let textureLoader = new THREE.TextureLoader();
-    let texture = textureLoader.load("../../assets/pink-flowers-seamless.jpg");
-    texture.wrapS = THREE.RepeatWrapping;
-    texture.wrapT = THREE.RepeatWrapping;
-    texture.repeat.set(0.01, 0.01);
+    const textureLoader = new THREE.TextureLoader();
+
+    const furBaseColor = textureLoader.load(
+      "../../assets/Stylized_Fur_002_basecolor.jpg"
+    );
+    furBaseColor.wrapS = THREE.RepeatWrapping;
+    furBaseColor.wrapT = THREE.RepeatWrapping;
+    furBaseColor.repeat.set(0.1, 0.1);
+
+    const furNormalMap = textureLoader.load(
+      "../../assets/Stylized_Fur_002_normal.jpg"
+    );
+    furNormalMap.wrapS = THREE.RepeatWrapping;
+    furNormalMap.wrapT = THREE.RepeatWrapping;
+    furNormalMap.repeat.set(0.1, 0.1);
+
+    const furHeightMap = textureLoader.load(
+      "../../assets/Stylized_Fur_002_height.png"
+    );
+    furHeightMap.wrapS = THREE.RepeatWrapping;
+    furHeightMap.wrapT = THREE.RepeatWrapping;
+    furHeightMap.repeat.set(0.1, 0.1);
+
+    const furRoughnessMap = textureLoader.load(
+      "../../assets/Stylized_Fur_002_roughness.jpg"
+    );
+    const furAmbientOcclusionMap = textureLoader.load(
+      "../../assets/Stylized_Fur_002_ambientOcclusion.jpg"
+    );
+    furAmbientOcclusionMap.wrapS = THREE.RepeatWrapping;
+    furAmbientOcclusionMap.wrapT = THREE.RepeatWrapping;
+    furAmbientOcclusionMap.repeat.set(0.1, 0.1);
 
     this.material = new THREE.MeshPhongMaterial({
-      // color: 0xdb4b9f,
+      color: 0xdb4b9f,
       specular: 0x222222,
-      shininess: 3000,
-      side: THREE.DoubleSide,
-      map: texture,
+      shininess: 300,
+
+      map: furBaseColor,
+      normalMap: furNormalMap,
+      displacementMap: furHeightMap,
+      // roughnessMap: furRoughnessMap,
+      aoMap: furAmbientOcclusionMap,
     });
 
     this._scene.add(this);
